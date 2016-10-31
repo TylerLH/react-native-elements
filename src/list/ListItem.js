@@ -15,6 +15,7 @@ const ListItem = ({
   rightIcon,
   avatar,
   avatarStyle,
+  avatarComponent,
   underlayColor,
   subtitle,
   subtitleStyle,
@@ -31,9 +32,29 @@ const ListItem = ({
   if (component) {
     Component = component
   }
+
+  let avatarElement = null
   if (typeof avatar === 'string') {
     avatar = {uri: avatar}
   }
+
+  // Use default avatar if we have a source
+  if (avatar) {
+    avatarElement = (
+      <Image
+        style={[
+          styles.avatar,
+          roundAvatar && {borderRadius: 17},
+          avatarStyle && avatarStyle]}
+        source={avatar}
+      />
+    )
+  }
+  // Allow custom avatar component if it's defined
+  if (avatarComponent) {
+    avatarElement = avatarComponent
+  }
+
   return (
     <Component
       onPress={onPress}
@@ -50,17 +71,7 @@ const ListItem = ({
             />
           )
         }
-        {
-          avatar && (
-            <Image
-              style={[
-                styles.avatar,
-                roundAvatar && {borderRadius: 17},
-                avatarStyle && avatarStyle]}
-              source={avatar}
-              />
-          )
-        }
+        {avatarElement}
         <View style={styles.titleContainer}>
           <Text
             style={[
@@ -107,6 +118,7 @@ ListItem.defaultProps = {
 ListItem.propTypes = {
   title: PropTypes.string,
   avatar: PropTypes.any,
+  avatarComponent: PropTypes.element,
   icon: PropTypes.any,
   onPress: PropTypes.func,
   rightIcon: PropTypes.object,
